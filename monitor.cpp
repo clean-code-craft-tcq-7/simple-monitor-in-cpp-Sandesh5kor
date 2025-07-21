@@ -15,16 +15,35 @@ void showCriticalMessage(const string& message) {
     }
 }
 
-int vitalsOk(float temperature, float pulseRate, float spo2) {
+int vitaltemperatureOk(int temperature)
+{
   if (temperature > 102 || temperature < 95) {
     showCriticalMessage("Temperature is critical");
     return 0;
-  } else if (pulseRate < 60 || pulseRate > 100) {
+  }
+  return 1;
+}
+
+int vitalpulseRateOk(int pulseRate)
+{
+  if (pulseRate < 60 || pulseRate > 100) {
     showCriticalMessage("Pulse Rate is out of range!");
     return 0;
-  } else if (spo2 < 90) {
+  }
+  return 1;
+}
+
+int vitalspo2Ok(int spo2)
+{
+  if (spo2 < 90) {
     showCriticalMessage("Oxygen Saturation out of range!");
     return 0;
   }
   return 1;
+}
+
+int vitalsOk(float temperature, float pulseRate, float spo2) {
+  return vitaltemperatureOk(temperature) && 
+         vitalpulseRateOk(pulseRate) && 
+         vitalspo2Ok(spo2);
 }

@@ -4,6 +4,7 @@
 #include <chrono>
 #include <iostream>
 using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
+using std::string;
 
 void showCriticalMessage(const string& message) {
     cout << message << endl;
@@ -18,7 +19,7 @@ void showCriticalMessage(const string& message) {
 int vitaltemperatureOk(int temperature)
 {
   if (temperature > 102 || temperature < 95) {
-    showCriticalMessage("Temperature is critical");
+    showCriticalMessage(string("Temperature is critical"));
     return 0;
   }
   return 1;
@@ -27,7 +28,7 @@ int vitaltemperatureOk(int temperature)
 int vitalpulseRateOk(int pulseRate)
 {
   if (pulseRate < 60 || pulseRate > 100) {
-    showCriticalMessage("Pulse Rate is out of range!");
+    showCriticalMessage(string("Pulse Rate is out of range!"));
     return 0;
   }
   return 1;
@@ -36,7 +37,7 @@ int vitalpulseRateOk(int pulseRate)
 int vitalspo2Ok(int spo2)
 {
   if (spo2 < 90) {
-    showCriticalMessage("Oxygen Saturation out of range!");
+    showCriticalMessage(string("Oxygen Saturation out of range!"));
     return 0;
   }
   return 1;

@@ -6,45 +6,47 @@
 using std::cout, std::flush, std::this_thread::sleep_for, std::chrono::seconds;
 using std::string;
 
-void showCriticalMessage(const string& message) {
-    cout << message << endl;
+// Language support
+enum class Language { EN, DE };
+Language currentLanguage = Language::EN;
+
+void setLanguage(Language lang) {
+    currentLanguage = lang;
+}
+
+string translate(const string& key, const string& vitalName) {
+    if (currentLanguage == Language::DE) {
+        if (key == "out_of_range") return " " + vitalName + " ist außerhalb des Bereichs!\n";
+    }
+    // Default: English
+    if (key == "out_of_range") return " " + vitalName + " is out of range!\n";
+    return "";
+}
+
+void vitalsCheckAttention() {
     for (int i = 0; i < 6; i++) {
         cout << "\r* " << flush;
-        this_thread::sleep_for(chrono::seconds(1));
+        sleep_for(seconds(1));
         cout << "\r *" << flush;
-        this_thread::sleep_for(chrono::seconds(1));
+        sleep_for(seconds(1));
     }
 }
 
-int vitaltemperatureOk(int temperature)
-{
-  if (temperature > 102 || temperature < 95) {
-    showCriticalMessage(string("Temperature is critical"));
-    return 0;
-  }
-  return 1;
+bool isVitalOk(float value, float lower, float upper, const string& name) {
+    if (value < lower || value > upper) {
+        cout << translate("out_of_range", name);
+        vitalsCheckAttention();
+        return false;
+    }
+    return true;
 }
 
-int vitalpulseRateOk(int pulseRate)
-{
-  if (pulseRate < 60 || pulseRate > 100) {
-    showCriticalMessage(string("Pulse Rate is out of range!"));
-    return 0;
-  }
-  return 1;
-}
-
-int vitalspo2Ok(int spo2)
-{
-  if (spo2 < 90) {
-    showCriticalMessage(string("Oxygen Saturation out of range!"));
-    return 0;
-  }
-  return 1;
-}
-
-int vitalsOk(float temperature, float pulseRate, float spo2) {
-  return vitaltemperatureOk(temperature) && 
-         vitalpulseRateOk(pulseRate) && 
-         vitalspo2Ok(spo2);
+bool vitalsOk(float temperature, float pulseRate, float spo2,
+              float bloodSugar, float bloodPressure, float respiratoryRate) {
+    return isVitalOk(temperature, 95, 102, "Temperature") &&
+           isVitalOk(pulseRate, 60, 100, "Pulse Rate") &&
+           isVitalOk(spo2, 90, 100, "Oxygen Saturation") &&
+           isVitalOk(bloodSugar, 70, 110, "Blood Sugar") &&
+           isVitalOk(bloodPressure, 90, 150, "Blood Pressure") &&
+           isVitalOk(respiratoryRate, 12, 20, "Respiratory Rate");
 }
